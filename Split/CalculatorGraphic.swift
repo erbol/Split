@@ -239,7 +239,7 @@ class CalculatorGraphic{
 
             case "M": opStack += [Op.Variable("M")]
                 // Операции
-            case "s":
+            case "q":
                 // корень квадратный
                 
                 pushStack(4)
