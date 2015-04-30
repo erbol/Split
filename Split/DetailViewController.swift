@@ -24,7 +24,7 @@ class DetailViewController: UIViewController {
     //let rect = CGRectMake(0, 0, view.frame.maxX , view.frame.maxY)
     
     
-    // Переменная detailItem
+    // Переменная detailItem для передачи данных от MasterView
     var detailItem: AnyObject? {
         didSet {
             // Update the view.
@@ -47,8 +47,9 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        // Передача данных от MasterView
         self.configureView()
+        
         
         let panGesture = UIPanGestureRecognizer(target: self, action: Selector("recognizePanGesture:"))
         view.addGestureRecognizer(panGesture)

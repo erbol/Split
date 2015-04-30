@@ -22,9 +22,8 @@ import UIKit
 
 class MasterViewController: UIViewController {
 
-    @IBAction func textOutput(sender: UIButton) {
-        //println("dfdf")
-    }
+
+    // Задаем переменные для обмена данными
     var detailViewController: DetailViewController? = nil
     var objects = [AnyObject]()
     //-------------------------------------------
@@ -205,6 +204,7 @@ class MasterViewController: UIViewController {
 
     // MARK: - Segues
 
+    // Переходим к DetailView
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         //println(segue.identifier!)
         // Проверяем идентификатор объекта который дал команду
