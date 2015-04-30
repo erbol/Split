@@ -194,9 +194,7 @@ class MasterViewController: UIViewController {
     }
 
     
-    
-    
-    
+    // ??
     override func awakeFromNib() {
         super.awakeFromNib()
         if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
@@ -204,10 +202,6 @@ class MasterViewController: UIViewController {
             self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
         }
     }
-
-
-
-
 
     // MARK: - Segues
 
@@ -235,11 +229,5 @@ class MasterViewController: UIViewController {
 
         }
     }
-
-    // MARK: - Table View
-    
-    
-
-
 }
 
