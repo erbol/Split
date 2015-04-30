@@ -212,7 +212,7 @@ class MasterViewController: UIViewController {
     // MARK: - Segues
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        println(segue.identifier!)
+        //println(segue.identifier!)
         if segue.identifier == "showDetail" {
             
             let object = "Hello erbol"
