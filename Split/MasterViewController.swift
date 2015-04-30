@@ -213,19 +213,23 @@ class MasterViewController: UIViewController {
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         //println(segue.identifier!)
+        // Проверяем идентификатор объекта который дал команду
         if segue.identifier == "showDetail" {
             
-            let object = "Hello erbol"
+            //
+            //let object = "Hello erbol"
             
             
             let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
             
             //controller.detailItem = object
             //controller.erbol1()
+            // Задаем значения для переменных detailController
             controller.str = brain.description()
             //controller.erbol = "Hello"
-            
+            // ??
             controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+            // ??
             controller.navigationItem.leftItemsSupplementBackButton = true
             
 
