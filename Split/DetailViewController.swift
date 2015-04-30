@@ -15,7 +15,7 @@ class DetailViewController: UIViewController {
     
     let graph = CalculatorGraphic()
     var contentScaleFactor: CGFloat = 1// ???
-    let scale: CGFloat = 1.0
+    var scale: CGFloat = 1.0
     var str = "M*sin(M*0.03)"
     //let str = "M*M/4"
     //let scale: CGFloat = 20.0 для функции "M*M/5"

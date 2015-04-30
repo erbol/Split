@@ -308,6 +308,18 @@
                                     <segue destination="vC3-pB-5Vb" kind="showDetail" identifier="showDetail" id="bdh-1F-6EB"/>
                                 </connections>
                             </button>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="2Rc-YG-hrO">
+                                <rect key="frame" x="241" y="518" width="118" height="31"/>
+                                <connections>
+                                    <action selector="scaleVal:" destination="1vS-rQ-YxZ" eventType="valueChanged" id="jix-fg-clH"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="1" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fAM-1e-SFt">
+                                <rect key="frame" x="373" y="518" width="42" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -321,7 +333,9 @@
                     <connections>
                         <outlet property="display" destination="Y6c-lC-9oS" id="mqv-6K-oI1"/>
                         <outlet property="history" destination="UnS-0N-Vmf" id="tOT-nP-Wt0"/>
+                        <outlet property="labSlaider" destination="fAM-1e-SFt" id="zA3-WB-rXT"/>
                         <outlet property="point" destination="mvX-dy-ku5" id="F0x-vT-IZr"/>
+                        <outlet property="slaider" destination="2Rc-YG-hrO" id="kSf-39-lYb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ELX-9R-dhM" userLabel="First Responder" sceneMemberID="firstResponder"/>

@@ -192,7 +192,7 @@ class MasterViewController: UIViewController {
         
     }
 
-    
+
     // ??
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -201,6 +201,7 @@ class MasterViewController: UIViewController {
             self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
         }
     }
+
 
     // MARK: - Segues
 
@@ -220,6 +221,10 @@ class MasterViewController: UIViewController {
             //controller.erbol1()
             // Задаем значения для переменных detailController
             controller.str = brain.description()
+            if let slaid = labSlaider.text{
+                controller.scale = CGFloat(slaid.toInt()!)
+            }
+            
             //controller.erbol = "Hello"
             // ??
             controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
@@ -229,5 +234,16 @@ class MasterViewController: UIViewController {
 
         }
     }
+    // Устанавливаем значение для scale
+    @IBOutlet weak var labSlaider: UILabel!
+    
+    @IBOutlet weak var slaider: UISlider!
+    
+
+    
+    @IBAction func scaleVal(sender: UISlider) {
+        labSlaider.text = String(format: "%.0f", slaider.value)
+    }
+    
 }
 
