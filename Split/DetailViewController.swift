@@ -6,7 +6,7 @@ class DetailViewController: UIViewController {
     
     var scale: CGFloat = 31.0
     //let str = "sin(sqrt(M*sin(M*0.03)))"
-    var str = "sqrt(M*M*M)"
+    var str = "√(M×M×M)"
     //let scale: CGFloat = 20.0 для функции "M*M/5"
     
     
@@ -78,7 +78,7 @@ class DetailViewController: UIViewController {
         //origin = CGPoint(x: view.frame.midX   , y: view.frame.midY  )
         //rect = CGRect(x: 0, y: 0, width: view.frame.maxX , height: view.frame.maxY)
         
-        draw()
+        //draw()
     }
     
     func draw(){

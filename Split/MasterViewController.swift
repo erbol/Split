@@ -90,7 +90,7 @@ class MasterViewController: UIViewController {
                 display.text = dropLast(display.text!)
                 
             }else{
-                display.text = ""
+                display.text = "0"
             }
         }else{
             brain.nonPrivateAPI("undo")
@@ -219,11 +219,11 @@ class MasterViewController: UIViewController {
             //controller.erbol1()
             // Задаем значения для переменных detailController
             controller.str = brain.description()
-            println(controller.str)
+            //println(controller.str)
             if let slaid = labSlaider.text{
                 controller.scale = CGFloat(slaid.toInt()!)
             }
-            
+            controller.draw()
             //controller.erbol = "Hello"
             // ??
             controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
