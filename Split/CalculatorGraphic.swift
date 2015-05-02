@@ -331,7 +331,7 @@ class CalculatorGraphic{
             case "+":
                 pushStack(2)
                 stack += [.Value("+",2)]
-            case "*":
+            case "×":
                 pushStack(3)
                 stack += [.Value("×",3)]
                 // Скобки
