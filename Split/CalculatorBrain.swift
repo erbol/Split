@@ -86,6 +86,7 @@ class CalculatorBrain {
         learnOp(Op.UnaryOperation("cos",cos, nil))
         learnOp(Op.Constant("π",{M_PI}))
         learnOp(Op.Constant("e",{M_E}))
+        learnOp(Op.UnaryOperation("±", { -$0 }, nil))
         learnOp(Op.Variable("M"))
     }
     

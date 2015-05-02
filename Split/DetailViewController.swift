@@ -4,27 +4,13 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    //commit
-    
-    @IBOutlet weak var imageView: UIImageView!
-
-
-
-
-    
-    
-    let graph = CalculatorGraphic()
-    var contentScaleFactor: CGFloat = 1// ???
-    var scale: CGFloat = 1.0
-    var str = "M*sin(M*0.03)"
-    //let str = "M*M/4"
+    var scale: CGFloat = 31.0
+    //let str = "sin(sqrt(M*sin(M*0.03)))"
+    var str = "sqrt(M*M*M)"
     //let scale: CGFloat = 20.0 для функции "M*M/5"
-    var origin = CGPoint.zeroPoint
-    var rect = CGRect()
-    //let rect = CGRectMake(0, 0, view.frame.maxX , view.frame.maxY)
     
     
-    // Переменная detailItem для передачи данных от MasterView
+    // Переменная detailItem
     var detailItem: AnyObject? {
         didSet {
             // Update the view.
@@ -37,19 +23,32 @@ class DetailViewController: UIViewController {
         if let detail: AnyObject = self.detailItem {
             /*
             if let label = self.textDetail {
-                label.text = detail.description
+            label.text = detail.description
             }
-*/
+            */
         }
     }
+    
+    // В методе viewDidLoad() надо добавить инструкцию self.configureView()
 
+    // Начало кода CalculatorGraphic
+    // --------------------------------------
+    
+    @IBOutlet weak var imageView: UIImageView!
+
+    let graph = CalculatorGraphic()
+    var contentScaleFactor: CGFloat = 1// ???
+
+    var origin = CGPoint.zeroPoint
+    var rect = CGRect()
+    //let rect = CGRectMake(0, 0, view.frame.maxX , view.frame.maxY)
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Передача данных от MasterView
-        self.configureView()
         
+        self.configureView()
         
         let panGesture = UIPanGestureRecognizer(target: self, action: Selector("recognizePanGesture:"))
         view.addGestureRecognizer(panGesture)
@@ -124,7 +123,7 @@ class DetailViewController: UIViewController {
         drawAxes(context)
         
         drawText(str)
-        //imageView. = UIGraphicsGetImageFromCurrentImageContext()
+        
         imageView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
@@ -356,7 +355,8 @@ class DetailViewController: UIViewController {
         
     }
 
-    
+    // Конец кода CalculatorGraphic
+    // --------------------------------------
 
 
 }

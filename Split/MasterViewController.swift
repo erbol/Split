@@ -1,12 +1,5 @@
 // Текст расширения взят со страницы http://overcram.com/questions/?qid=192606
-extension String {
-    func toDouble() -> Double? {
-        // numberFromString это метод класса NSNumberFormatter, он извлекает из строки число
-        // возвращает либо число либо nil
-        // Этот метод имеет свойство doubleValue
-        return CalculatorFormatter.sharedInstance.numberFromString(self)?.doubleValue
-    }
-}
+
 
 extension UInt8 {
     func odd() -> Bool {
@@ -28,7 +21,9 @@ class MasterViewController: UIViewController {
     var objects = [AnyObject]()
     //-------------------------------------------
 
-
+    // Начало кода Calculator
+    //-------------------------------------------
+    
     // Метка для ввода данных
     @IBOutlet weak var display: UILabel!
     
@@ -49,20 +44,22 @@ class MasterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        //self.navigationItem.leftBarButtonItem = self.editButtonItem()
-        
-        //let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
-        //self.navigationItem.rightBarButtonItem = addButton
-        if let split = self.splitViewController {
-            let controllers = split.viewControllers
-            self.detailViewController = controllers[controllers.count-1].topViewController as? DetailViewController
-        }
-        
         // Создаем надпись(Title) на кнопке в соответствии с локальным символом для плавающей точки
-        
         point.setTitle(decimalSeparator, forState: UIControlState.Normal)
     }
+    
+    @IBAction func sigmDigit(sender: UIButton) {
+        if userIsInTheMiddleOfTypingANumber {
+            if (display.text!.rangeOfString("-") != nil) {
+                display.text = dropFirst(display.text!)
+            } else {
+                display.text = "-" + display.text!
+            }
+        } else {
+            operate(sender)
+        }
+    }
+    
     
     @IBAction func enterMToDictionary(sender: UIButton) {
         if let number = displayValue {
@@ -75,7 +72,7 @@ class MasterViewController: UIViewController {
     
     @IBAction func Clear(sender: UIButton) {
         
-        display.text=""
+        display.text="0"
         userIsInTheMiddleOfTypingANumber = false
         history.text = ""
         brain.nonPrivateAPI("clearArray")
@@ -115,15 +112,15 @@ class MasterViewController: UIViewController {
         if userIsInTheMiddleOfTypingANumber {
             // продолжаем ввод операнда
             display.text = display.text! + digit
-            // Чтобы не было ведущих нулей в целом числе
+            // Убираем ведущие нули
             if (display.text!.rangeOfString(".") == nil){
                 display.text = "\(display.text!.toInt()!)"
             }
-            //display.text = "\(displayValue!)"
+            
         } else {
             display.text = digit
-            //display.text = "\(displayValue!)"
-            // Чтобы не было ведущих нулей в целом числе
+            
+            // Убираем ведущие нули
             if (display.text!.rangeOfString(".") == nil){
                 display.text = "\(display.text!.toInt()!)"
             }
@@ -188,10 +185,11 @@ class MasterViewController: UIViewController {
             let result = brain.description() + " = "
             history.text = result
             
-        }  
+        }
         
     }
-
+    // Конец кода Calculator
+//-------------------------------------
 
     // ??
     override func awakeFromNib() {
@@ -221,6 +219,7 @@ class MasterViewController: UIViewController {
             //controller.erbol1()
             // Задаем значения для переменных detailController
             controller.str = brain.description()
+            println(controller.str)
             if let slaid = labSlaider.text{
                 controller.scale = CGFloat(slaid.toInt()!)
             }
