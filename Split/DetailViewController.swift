@@ -4,7 +4,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    var scale: CGFloat = 31.0
+    var scale: CGFloat = 1.0
     //let str = "sin(sqrt(M*sin(M*0.03)))"
     var str = "√(M×M×M)"
     //let scale: CGFloat = 20.0 для функции "M*M/5"
@@ -62,17 +62,21 @@ class DetailViewController: UIViewController {
         
         if view.bounds.width >= view.frame.width {
             origin = CGPoint(x: view.frame.midX   , y: view.frame.midY  )
-            rect = CGRect(x: 0, y: 0, width: view.frame.maxX , height: view.frame.maxY)
+            //rect = CGRect(x: 0, y: 0, width: view.frame.maxX , height: view.frame.maxY)
             
         }else{
             
             origin = CGPoint(x: view.bounds.midX   , y: view.bounds.midY  )
-            rect = CGRect(x: 0, y: 0, width:  view.bounds.size.width, height: view.bounds.size.height)
+            //rect = CGRect(x: 0, y: 0, width:  view.bounds.size.width, height: view.bounds.size.height)
             //rect = CGRect(x: view.bounds.size.width - 320, y: view.bounds.size.height - 30,width:  350, height: 30)
             
         }
         
-        
+
+        //println(self.view.frame.width)
+        //println(view.bounds.width)
+        //println(self.view.frame.height)
+        //println(view.bounds.height)
         
         
         //origin = CGPoint(x: view.frame.midX   , y: view.frame.midY  )
@@ -91,13 +95,14 @@ class DetailViewController: UIViewController {
         var size = CGSize.zeroSize
         
         if view.bounds.width >= view.frame.width {
-            
+            //origin = CGPoint(x: view.frame.midX   , y: view.frame.midY  )
             rect = CGRect(x: 0, y: 0, width: view.frame.maxX , height: view.frame.maxY)
             size = self.view.frame.size
             //origin = CGPoint(x: self.view.frame.midX   , y: self.view.frame.midY  )
             //println(1)
             
         }else{
+            //origin = CGPoint(x: view.bounds.midX   , y: view.bounds.midY  )
             rect = CGRect(x: 0, y: 0, width:  view.bounds.size.width, height: view.bounds.size.height)
             size = self.view.bounds.size
             //origin = CGPoint(x: self.view.bounds.midX   , y: self.view.bounds.midY  )
@@ -185,7 +190,7 @@ class DetailViewController: UIViewController {
     
     func drawText(str: String){
         let nameFunction = "Y = " + str
-        let ratio = CGFloat(view.frame.width/view.bounds.width)
+        //let ratio = CGFloat(view.frame.width/view.bounds.width)
         //println(ratio)
         
         var nameFunctionRect = CGRect()
@@ -202,7 +207,8 @@ class DetailViewController: UIViewController {
         let textStyle = NSMutableParagraphStyle.defaultParagraphStyle()
         
         let numberOneAttributes = [
-            NSFontAttributeName: font!]
+            NSFontAttributeName: font!
+        ]
         nameFunction.drawInRect(nameFunctionRect,
             withAttributes:numberOneAttributes)
         

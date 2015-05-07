@@ -120,9 +120,10 @@ class CalculatorGraphic{
         learnOp(Op.UnaryOperation("√",sqrt) {$0<0 ? "√ отриц. числа" : nil})
         learnOp(Op.UnaryOperation("sin",sin, nil))
         learnOp(Op.UnaryOperation("cos",cos, nil))
+        learnOp(Op.UnaryOperation("±", { -$0 }, nil))
         learnOp(Op.Constant("π",{M_PI}))
         learnOp(Op.Constant("e",{M_E}))
-        learnOp(Op.UnaryOperation("±", { -$0 }, nil))
+        
         learnOp(Op.Variable("M"))
     }
 
@@ -130,6 +131,8 @@ class CalculatorGraphic{
     func  graphData(left:Int,right:Int, scale:CGFloat)->[CGPoint]{
         
 
+        // Если стек с выражением пустой то возвращаем пустой массив с данными
+        if opStack.isEmpty {return []}
         // Очищаем массив
         data = []
         for var i = left; i < right; i += 1 {

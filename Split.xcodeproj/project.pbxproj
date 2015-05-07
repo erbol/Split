@@ -7,16 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		953E799B1AF566B800E856B1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 953E799A1AF566B800E856B1 /* Main.storyboard */; };
 		95ED29801AF0B17D00855CAA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED297F1AF0B17D00855CAA /* AppDelegate.swift */; };
 		95ED29821AF0B17D00855CAA /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED29811AF0B17D00855CAA /* MasterViewController.swift */; };
 		95ED29841AF0B17D00855CAA /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED29831AF0B17D00855CAA /* DetailViewController.swift */; };
-		95ED29871AF0B17D00855CAA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95ED29851AF0B17D00855CAA /* Main.storyboard */; };
 		95ED29891AF0B17D00855CAA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95ED29881AF0B17D00855CAA /* Images.xcassets */; };
 		95ED298C1AF0B17D00855CAA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 95ED298A1AF0B17D00855CAA /* LaunchScreen.xib */; };
 		95ED29981AF0B17D00855CAA /* SplitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ED29971AF0B17D00855CAA /* SplitTests.swift */; };
 		95EFBF0B1AF145FE00E46726 /* AxesDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95EFBF0A1AF145FE00E46726 /* AxesDrawer.swift */; };
 		95F019C21AF4CB5B00535795 /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F019C11AF4CB5B00535795 /* CalculatorBrain.swift */; };
 		95F019C41AF4CC0B00535795 /* CalculatorGraphic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F019C31AF4CC0B00535795 /* CalculatorGraphic.swift */; };
+		95F4448D1AF7BBCF00AD364E /* Axes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F4448C1AF7BBCF00AD364E /* Axes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,12 +31,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		953E799A1AF566B800E856B1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		95D4B4121AF9E00F008E5BA0 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 		95ED297A1AF0B17D00855CAA /* Split.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Split.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95ED297E1AF0B17D00855CAA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95ED297F1AF0B17D00855CAA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		95ED29811AF0B17D00855CAA /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		95ED29831AF0B17D00855CAA /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		95ED29861AF0B17D00855CAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		95ED29881AF0B17D00855CAA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		95ED298B1AF0B17D00855CAA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		95ED29911AF0B17D00855CAA /* SplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +46,7 @@
 		95EFBF0A1AF145FE00E46726 /* AxesDrawer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AxesDrawer.swift; sourceTree = "<group>"; };
 		95F019C11AF4CB5B00535795 /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
 		95F019C31AF4CC0B00535795 /* CalculatorGraphic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorGraphic.swift; sourceTree = "<group>"; };
+		95F4448C1AF7BBCF00AD364E /* Axes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Axes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,10 +90,12 @@
 			children = (
 				95ED29811AF0B17D00855CAA /* MasterViewController.swift */,
 				95EFBF0A1AF145FE00E46726 /* AxesDrawer.swift */,
+				95F4448C1AF7BBCF00AD364E /* Axes.swift */,
 				95F019C31AF4CC0B00535795 /* CalculatorGraphic.swift */,
+				95D4B4121AF9E00F008E5BA0 /* MyPlayground.playground */,
 				95F019C11AF4CB5B00535795 /* CalculatorBrain.swift */,
+				953E799A1AF566B800E856B1 /* Main.storyboard */,
 				95ED29831AF0B17D00855CAA /* DetailViewController.swift */,
-				95ED29851AF0B17D00855CAA /* Main.storyboard */,
 				95ED297D1AF0B17D00855CAA /* Supporting Files */,
 			);
 			path = Split;
@@ -204,7 +209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95ED29871AF0B17D00855CAA /* Main.storyboard in Resources */,
+				953E799B1AF566B800E856B1 /* Main.storyboard in Resources */,
 				95ED298C1AF0B17D00855CAA /* LaunchScreen.xib in Resources */,
 				95ED29891AF0B17D00855CAA /* Images.xcassets in Resources */,
 			);
@@ -225,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				95F019C21AF4CB5B00535795 /* CalculatorBrain.swift in Sources */,
+				95F4448D1AF7BBCF00AD364E /* Axes.swift in Sources */,
 				95ED29841AF0B17D00855CAA /* DetailViewController.swift in Sources */,
 				95EFBF0B1AF145FE00E46726 /* AxesDrawer.swift in Sources */,
 				95ED29821AF0B17D00855CAA /* MasterViewController.swift in Sources */,
@@ -252,14 +258,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		95ED29851AF0B17D00855CAA /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				95ED29861AF0B17D00855CAA /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		95ED298A1AF0B17D00855CAA /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
