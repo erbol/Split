@@ -106,15 +106,15 @@ class AxesDrawer
             
             // Получаем цену деления в единицах шкалы, в юнитах
             var unitsPerHashmark = minimumPointsPerHashmark / pointsPerUnit
-            println("unitsPerHashmark = \(unitsPerHashmark)")
+            //println("unitsPerHashmark = \(unitsPerHashmark)")
             if unitsPerHashmark < 1 {
                 // функция ceil округляет к целому числу, в сторону большего целого значения
                 unitsPerHashmark = pow(10, ceil(log10(unitsPerHashmark)))
-                println("ceil(log10(unitsPerHashmark)) = \(ceil(log10(unitsPerHashmark)))")
+                //println("ceil(log10(unitsPerHashmark)) = \(ceil(log10(unitsPerHashmark)))")
             } else {
                 // floor - округление
                 unitsPerHashmark = floor(unitsPerHashmark)
-                println("unitsPerHashmark = \(unitsPerHashmark)")
+                //println("unitsPerHashmark = \(unitsPerHashmark)")
             }
             
             // для scale = 1 => pointsPerHashmark = 40
