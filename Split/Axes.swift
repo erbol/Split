@@ -34,11 +34,10 @@ class Axes
     //    you'd set pointsPerUnit to 50
     
     // Этот метод является сердцем AxesDrawer
-    // Это привлекает в системе координат текущего графического контекста в
-    // Поэтому происхождение и границы должны быть в настоящее время графический контекст системы координат
-    // PointsPerUnit, по существу, "масштаб" из осей
-    // Например, если вы хотели, чтобы 100 баллов по оси между -1 и 1,
-    // Вы установите pointsPerUnit до 50
+
+    // PointsPerUnit, по существу, "масштаб" для осей
+    // Например, если бы вы хотели, чтобы расстояние между -1 и 1 равнялось 100 точкам по оси ,
+    // Вы установите pointsPerUnit равным 50
     
     
     // Рисуем оси и вызываем функцию drawHashmarksInRect которая рисует шкалу на осях в заданном масштабе и цифры возле делений шкалы
@@ -76,13 +75,7 @@ class Axes
             
             // figure out which is the closest set of hashmarks (radiating out from the origin) that are in bounds
             var startingHashmarkRadius: CGFloat = 1
-            if !CGRectContainsPoint(bounds, origin) {
-                let leftx = max(origin.x - bounds.maxX, 0)
-                let rightx = max(bounds.minX - origin.x, 0)
-                let downy = max(origin.y - bounds.minY, 0)
-                let upy = max(bounds.maxY - origin.y, 0)
-                startingHashmarkRadius = min(min(leftx, rightx), min(downy, upy)) / pointsPerHashmark + 1
-            }
+
             
             // now create a bounding box inside whose edges those four hashmarks lie
             let bboxSize = pointsPerHashmark * startingHashmarkRadius * 2

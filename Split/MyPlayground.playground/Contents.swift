@@ -45,3 +45,36 @@ var roundedF1: CGFloat = ceil(f)
 
 // Аргументом функции log10 должен быть тип Double
 let o = log10(822.0)
+
+
+func test(p1: Int?) {
+    if let val = p1 {
+        print(p1!)
+    } else {
+        print(p1)
+    }
+}
+
+test(2)
+
+func test1(p1: Int?) {
+    if p1 > 0 {
+        print(p1!)
+    } else {
+        print(p1)
+    }
+}
+
+test1(-2)
+
+func test2(p1: Int?) {
+    if (p1 != nil) {
+        print(p1!)
+    } else {
+        print(p1)
+    }
+}
+test2(-2)
+var origin:Int? = nil
+var graphCenter = 7
+origin =  origin ?? graphCenter

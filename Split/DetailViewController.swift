@@ -8,47 +8,32 @@ class DetailViewController: UIViewController {
     //let str = "sin(sqrt(M*sin(M*0.03)))"
     var str = "√(M×M×M)"
     //let scale: CGFloat = 20.0 для функции "M*M/5"
-    
-    
-    // Переменная detailItem
-    var detailItem: AnyObject? {
-        didSet {
-            // Update the view.
-            self.configureView()
-        }
-    }
-    
-    func configureView() {
-        // Update the user interface for the detail item.
-        if let detail: AnyObject = self.detailItem {
-            /*
-            if let label = self.textDetail {
-            label.text = detail.description
-            }
-            */
-        }
-    }
-    
-    // В методе viewDidLoad() надо добавить инструкцию self.configureView()
 
-    // Начало кода CalculatorGraphic
-    // --------------------------------------
-    
     @IBOutlet weak var imageView: UIImageView!
 
-    let graph = CalculatorGraphic()
-    var contentScaleFactor: CGFloat = 1// ???
+    let graph = StringToStack()
+    var contentScaleFactor: CGFloat = 1// Учитывает плотность пикселей у конкретного устройства на котором выполняется программа
 
     var origin = CGPoint.zeroPoint
     var rect = CGRect()
     //let rect = CGRectMake(0, 0, view.frame.maxX , view.frame.maxY)
     
     
+    var brain = CalculatorBrain()
+    typealias PropertyList = AnyObject
+    var program: PropertyList {
+        get {
+            return brain.program
+        }
+        set {
+            brain.program = newValue
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.configureView()
+        
         
         let panGesture = UIPanGestureRecognizer(target: self, action: Selector("recognizePanGesture:"))
         view.addGestureRecognizer(panGesture)
@@ -59,6 +44,17 @@ class DetailViewController: UIViewController {
         
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: Selector("recognizePinchGesture:"))
         view.addGestureRecognizer(pinchGesture)
+        
+        /*
+        // swipe в симуляторе xcode не работает по моему
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: Selector("respondToSwipeGesture:"))
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        view.addGestureRecognizer(swipeRight)
+        
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: Selector("respondToSwipeGesture:"))
+        swipeDown.direction = UISwipeGestureRecognizerDirection.Down
+        view.addGestureRecognizer(swipeDown)
+        */
         
         if view.bounds.width >= view.frame.width {
             origin = CGPoint(x: view.frame.midX   , y: view.frame.midY  )
@@ -219,7 +215,7 @@ class DetailViewController: UIViewController {
         let bounds = rect
         
         AxesDrawer(contentScaleFactor: contentScaleFactor)
-            .drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale, context : context)
+            .drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
     }
     
     func recognizePanGesture(sender: UIPanGestureRecognizer)
@@ -299,20 +295,16 @@ class DetailViewController: UIViewController {
     {
         
         let location:CGPoint = sender.locationInView(self.view)
-        //println(location)
-        //println(view.bounds.size)
-        //println(view.frame.size)
+
         
         let ratio = CGFloat(view.frame.width/view.bounds.width)
-        //println(ratio)
+
         if view.bounds.width >= view.frame.width {
             origin = CGPoint(x: location.x*ratio   , y: location.y*ratio  )
         }else{
             origin = CGPoint(x: location.x   , y: location.y  )
         }
-        //println(origin)
-        //origin = CGPoint(x: location.x   , y: location.y  )
-        //println(origin)
+
         
         
         draw()
@@ -322,43 +314,38 @@ class DetailViewController: UIViewController {
     
     func recognizePinchGesture(sender: UIPinchGestureRecognizer)
     {
-        //println("fdfd")
-        //sender.view!.transform = CGAffineTransformScale(self.view.transform, sender.scale, sender.scale)
-        
         if (sender.state == UIGestureRecognizerState.Began)
         {
             //println(sender.scale)
         }
-        
-        
-        
+
+        // Меняем высоту и ширину холста
+        // То есть преобразование CGAffineTransformScale именно и меняет высоту и ширину view
         view!.transform = CGAffineTransformScale(self.view.transform, sender.scale, sender.scale)
         
         if sender.state == UIGestureRecognizerState.Ended {
-            //println(self.view.bounds.size.width)
-            //println(view.bounds.size.width)
-            
-            
-            
-            
-            //println(self.view.frame.width)
-            //println(view.frame.width)
-            
-            
+         
         }
         
         sender.scale = 1
-        //println(self.origin)
+    
+    }
+    
+    func respondToSwipeGesture(gesture: UIGestureRecognizer) {
         
+        println("cxcx")
         
-        
-        
-        //println(location)
-        //origin = CGPoint(x: location.x   , y: location.y  )
-        
-        //draw(origin)
-        
-        
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            
+            switch swipeGesture.direction {
+            case UISwipeGestureRecognizerDirection.Right:
+                println("Swiped right")
+            case UISwipeGestureRecognizerDirection.Down:
+                println("Swiped down")
+            default:
+                break
+            }
+        }
     }
 
     // Конец кода CalculatorGraphic

@@ -52,7 +52,7 @@ class AxesDrawer
     
     
     // Рисуем оси и вызываем функцию drawHashmarksInRect которая рисует шкалу на осях в заданном масштабе и цифры возле делений шкалы
-    func drawAxesInRect(bounds: CGRect, origin: CGPoint, pointsPerUnit: CGFloat, context : CGContext)
+    func drawAxesInRect(bounds: CGRect, origin: CGPoint, pointsPerUnit: CGFloat)
     {
         // Исходно минимальное и максимальное значение для шкалы осей координат берем размер окна в пикселах
         // Затем с помощью множителя scale (pointsPerUnit) можем масштабировать значения меток шкалы 
@@ -63,7 +63,7 @@ class AxesDrawer
         // Зачем нужно сохранять предыдущий контекст ?
         // Что предыдущий контекст теряет если мы выполним какие то рисунки ?
         // Может быть в context хранится информация о толщине кисти , цвете и так далее
-        CGContextSaveGState(context)
+        CGContextSaveGState(UIGraphicsGetCurrentContext())
         
         //  Задаем тень для осей координат
         // "Не смотрятся" тени на рисунке
@@ -152,7 +152,7 @@ class AxesDrawer
             var bbox = CGRect(center: origin, size: CGSize(width: bboxSize, height: bboxSize))
             
             // formatter for the hashmark labels
-            let formatter = NSNumberFormatter()
+            //let formatter = NSNumberFormatter()
             formatter.maximumFractionDigits = Int(round(-log10(Double(unitsPerHashmark))))
             formatter.minimumIntegerDigits = 1
             
@@ -223,14 +223,15 @@ class AxesDrawer
         case Top(String)
         case Bottom(String)
         
-        static let VerticalOffset: CGFloat = 3
+        static let VerticalOffset: CGFloat = 3// отступ от оси по вертикали
         static let HorizontalOffset: CGFloat = 6
         
         func drawAnchoredToPoint(location: CGPoint, color: UIColor) {
             // Задаем атрибуты для текста
             let textColor = UIColor(red: 0.175, green: 0.458, blue: 0.431, alpha: 1)
             let attributes = [
-                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote),
+                NSFontAttributeName : UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote) ,
+                //NSFontAttributeName : UIFont.systemFontOfSize(29.0),
                 //NSForegroundColorAttributeName : color
                 NSForegroundColorAttributeName : textColor
             ]

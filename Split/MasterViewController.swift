@@ -1,28 +1,11 @@
-// Текст расширения взят со страницы http://overcram.com/questions/?qid=192606
-
-
-extension UInt8 {
-    func odd() -> Bool {
-        if self % 2 == 0{
-            return false
-        }else{
-            return true
-        }
-    }
-}
-
 import UIKit
+
+let formatter = CalculatorFormatter()
 
 class MasterViewController: UIViewController {
 
 
-    // Задаем переменные для обмена данными
-    var detailViewController: DetailViewController? = nil
-    var objects = [AnyObject]()
-    //-------------------------------------------
 
-    // Начало кода Calculator
-    //-------------------------------------------
     
     // Метка для ввода данных
     @IBOutlet weak var display: UILabel!
@@ -36,7 +19,7 @@ class MasterViewController: UIViewController {
     
     var userMadeOperation = false
     // NSNumberFormatter().decimalSeparator дает символ "локальной" плавающей точки
-    let decimalSeparator = NSNumberFormatter().decimalSeparator
+    let decimalSeparator = formatter.decimalSeparator
     
     @IBOutlet weak var history: UILabel!
     
@@ -48,7 +31,8 @@ class MasterViewController: UIViewController {
         point.setTitle(decimalSeparator, forState: UIControlState.Normal)
     }
     
-    @IBAction func sigmDigit(sender: UIButton) {
+    @IBAction func signDigit(sender: UIButton) {
+        
         if userIsInTheMiddleOfTypingANumber {
             if (display.text!.rangeOfString("-") != nil) {
                 display.text = dropFirst(display.text!)
@@ -62,9 +46,9 @@ class MasterViewController: UIViewController {
     
     
     @IBAction func enterMToDictionary(sender: UIButton) {
-        if let number = displayValue {
-            brain.nonPrivateAPI("enterVariable",operand:number)
-            //brain.enterVar(number)
+        if displayValue != nil {
+            brain.nonPrivateAPI("enterVariable",operand:displayValue!)
+            
             userIsInTheMiddleOfTypingANumber = true
         }
     }
@@ -139,8 +123,8 @@ class MasterViewController: UIViewController {
             enter()
         }
         // Помещаем в operation символ операции взятый с кнопки
-        if let operation = sender.currentTitle{
-            brain.nonPrivateAPI("performOperation",symbol: operation)
+        if sender.currentTitle != nil {
+            brain.nonPrivateAPI("performOperation",symbol: sender.currentTitle!)
             displayResult = brain.evaluateOrReportErrors()
         }
         
@@ -156,8 +140,8 @@ class MasterViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false
         
         // Non-private method MODEL
-        if let value = displayValue{
-            brain.nonPrivateAPI("pushOperand", operand:value)
+        if displayValue != nil {
+            brain.nonPrivateAPI("pushOperand", operand:displayValue!)
         }
         
         displayResult = brain.evaluateOrReportErrors()
@@ -188,60 +172,27 @@ class MasterViewController: UIViewController {
         }
         
     }
-    // Конец кода Calculator
-//-------------------------------------
-
-    // ??
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-            //self.clearsSelectionOnViewWillAppear = false
-            self.preferredContentSize = CGSize(width: 320.0, height: 600.0)
-        }
-    }
-
 
     // MARK: - Segues
 
     // Переходим к DetailView
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        //println(segue.identifier!)
-        // Проверяем идентификатор объекта который дал команду
-        if segue.identifier == "showDetail" {
-            
-            //
-            //let object = "Hello erbol"
-            
-            
-            let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-            
-            //controller.detailItem = object
-            //controller.erbol1()
-            // Задаем значения для переменных detailController
-            controller.str = brain.description()
-            //println(controller.str)
-            if let slaid = labSlaider.text{
-                controller.scale = CGFloat(slaid.toInt()!)
-            }
-            controller.draw()
-            //controller.erbol = "Hello"
-            // ??
-            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
-            // ??
-            controller.navigationItem.leftItemsSupplementBackButton = true
-            
-
+        var destination = segue.destinationViewController as? UIViewController
+        if let nc = destination as? UINavigationController {
+            destination = nc.visibleViewController
         }
-    }
-    // Устанавливаем значение для scale
-    @IBOutlet weak var labSlaider: UILabel!
-    
-    @IBOutlet weak var slaider: UISlider!
-    
-
-    
-    @IBAction func scaleVal(sender: UISlider) {
-        labSlaider.text = String(format: "%.0f", slaider.value)
+        if let gvc = destination as? GraphViewController {
+            if let identifier = segue.identifier {
+                switch identifier {
+                case "showDetail":
+                    println("")
+                    //gvc.title = brain.description == "" ? "Graph" : brain.description.componentsSeparatedByString(", ").last
+                    gvc.program = brain.program
+                default:
+                    break
+                }
+            }
+        }
     }
     
 }

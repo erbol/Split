@@ -1,7 +1,6 @@
 import Foundation
 
-
-class CalculatorBrain {
+class CalculatorBrain: enumStack {
     
     // enum Result - либо для значения стэка, либо для сообщения об ошибке
     // public, так как используется ViewController для получения оценки стэка
@@ -19,75 +18,31 @@ class CalculatorBrain {
         }
     }
     
-    // Создаем тип данных Op, который представлен альтернативным списком именованных наборов величин
-    // Например экземпляр типа с именем UnaryOperation состоит из трех величин - типа String, функции типа Double->Double
-    // и функции типа (Double->String?)?
-    private enum Op : Printable{
-        case Operand(Double)
-        // Для BinaryOperation
-        // Первый аргумент - символ операции
-        // второй аргумент(целого типа) приоритет(precedence) операции
-        // третий аргумент - операция математическая
-        // последний аргумент замыкание обрабатывающее ошибки и возвращающее сообщения об ошибке
-        case UnaryOperation(String,Double->Double,(Double->String?)?)
-        case BinaryOperation(String, UInt8, (Double,Double)->Double,(Double->String?)?)
-        case Variable(String)
-        case Constant(String, ()->Double)
-        
-        var precedence:UInt8{
-            get{
-                switch self{
-                case .BinaryOperation(_,let precedence, _,_):
-                    return precedence
-                default:
-                    return UInt8.max
-                }
-            }
-        }
-        
-        var description:String{
-            get{
-                switch self{
-                case .Operand(let operand):
-                    return "\(operand)"
-                case .Variable(let symbol):
-                    return symbol
-                case .UnaryOperation(let symbol, _, _):
-                    return symbol
-                case .BinaryOperation(let symbol, _, _,_):
-                    return symbol
-                case .Constant(let symbol, _):
-                    return symbol
-                }
-            }
-        }
-    }
-    
+    typealias PropertyList = AnyObject
 
-    // Массив для хранения операндов, функций и переменных
-    private var opStack = [Op]()
-    //Словарь для хранения символов функций и функционала - операнды плюс оператор соответсвующий функции
-    private var knownOps = [String:Op]()
-    // Словарь для ханения значений величин
-    var variableValues = [String:Double]()
     
-    // Заполняем словарь knownOps[String:Op]
-    // Ключ - символ операции, значение - величина типа Op
-    init() {
-        func learnOp(op:Op){
-            knownOps[op.description] = op
+    var program:PropertyList { // guaranteed to be a Property List
+        get {
+            return opStack.map{$0.description}
         }
-        learnOp(Op.BinaryOperation("×", 10, *,nil))
-        learnOp(Op.BinaryOperation("+", 1, +,nil))
-        learnOp(Op.BinaryOperation("÷",10,{$1/$0}) {$0 == 0.0 ? "Деление на нуль" : nil})
-        learnOp(Op.BinaryOperation("−", 4,{$1-$0},nil))
-        learnOp(Op.UnaryOperation("√",sqrt) {$0<0 ? "√ отриц. числа" : nil})
-        learnOp(Op.UnaryOperation("sin",sin, nil))
-        learnOp(Op.UnaryOperation("cos",cos, nil))
-        learnOp(Op.Constant("π",{M_PI}))
-        learnOp(Op.Constant("e",{M_E}))
-        learnOp(Op.UnaryOperation("±", { -$0 }, nil))
-        learnOp(Op.Variable("M"))
+        set{
+            // Предпологается, что мы получаем математическое выражение в виде стека
+            if let opSymbols = newValue as? Array<String> {
+                // Очищаем стек
+                var newOpStack = [Op]()
+                // Загружаем в стек выражения символы операций, операндов или переменной M
+                for opSymbol in opSymbols {
+                    if let op = knownOps[opSymbol]{
+                        newOpStack.append(op)
+                    } else if let operand = formatter.numberFromString(opSymbol)?.doubleValue {
+                        newOpStack.append(.Operand(operand))
+                    } else {
+                        newOpStack.append(.Variable(opSymbol))
+                    }
+                }
+                opStack = newOpStack
+            }
+        }
     }
     
     func nonPrivateAPI(name:String,operand:Double=0.0,symbol:String=""){
@@ -100,8 +55,8 @@ class CalculatorBrain {
             opStack.append(Op.Variable(symbol))
         case "performOperation" :
             // Выполняем операцию
-            if let operation = knownOps[symbol]{
-                opStack.append(operation)
+            if knownOps[symbol] != nil {
+                opStack.append(knownOps[symbol]!)
             }
         case "clearArray" :
             // Очищаем стек
@@ -116,79 +71,10 @@ class CalculatorBrain {
             variableValues["M"] = operand
         default: break
         }
-    }
-
-    private func variableToEvaluate(symbolVariable:String)->Double?{
-        if let variableValue = variableValues[symbolVariable] {
-            return variableValue
-        } else {
-            return nil
-        }
+        //println(opStack)
     }
     
-    private func copyArrayAndTakeTopStack(ops:[Op])->([Op],Op){
-        // Менять массив ops внутри функции нельзя, так как он передан по значению
-        // Создаем новый массив remainStack, его можно менять, то есть выполнять removeLast() над ним
-        var remainStack = ops
-        let topStack = remainStack.removeLast()
-        return (remainStack,topStack)
-    }
-    
-    private func unaryOperationToEvaluate(ops:[Op],operation:Double->Double)->(Double?,[Op]){
-
-        let (operand, remainingOps) = evaluate(ops)
-        if let operand1 = operand{
-            return (operation(operand1),remainingOps)
-        }else{
-            return (nil,remainingOps)
-        }
-    }
-    
-    private func binaryOperationToEvaluate(ops:[Op],operation:(Double,Double)->Double)->(Double?,[Op]){
         
-        let (operand1, remainingOps1) = evaluate(ops)
-        if let operandFirst = operand1{
-            let (operand2, remainingOps2) = evaluate(remainingOps1)
-            if let operandSecond = operand2{
-                return (operation(operandFirst,operandSecond),remainingOps2)
-            }else{
-                return (nil,remainingOps2)
-            }
-        }else{
-            return (nil,remainingOps1)
-        }
-    }
-    
-    private func evaluate(ops: [Op])  -> (result: Double?, remainingOps: [Op]){
-        if !ops.isEmpty {
-            let (remainingOps,op) = copyArrayAndTakeTopStack(ops)
-            switch op{
-            case .Operand(let operand): return(operand,remainingOps)
-            case .Constant(_, let operation): return (operation(),remainingOps)
-            case .Variable(let symbol): let variableValue = variableToEvaluate(symbol)
-                return (variableValue, remainingOps)
-            case .UnaryOperation(_,let operation, _): let (operand, remainingOps) = unaryOperationToEvaluate(remainingOps,operation: operation)
-                return (operand, remainingOps)
-            case .BinaryOperation(_, _, let operation,_): let (operand, remainingOps) = binaryOperationToEvaluate(remainingOps,operation: operation)
-                return (operand, remainingOps)
-            }
-        }
-        return (nil,ops)
-    }
-    
-    func evaluate()->Double?{
-        let(result,remainder) = evaluate(opStack)
-
-        // Чтобы при печати результата не было слова Optional
-        if let resultPrint = result {
-            println("\(opStack) = \(resultPrint) with \(remainder) left over")
-        }else{
-            println("\(opStack) = nil with \(remainder) left over")
-        }
-
-        return result
-    }
-  
     private func binaryOperationToDescription(ops:[Op], symbolOperation:String, opUpper:Op)->(String,[Op],UInt8){
         var (operand1, remainingOps1, precedenceOperand1) = description(ops)
         // Метод odd() определяет четное ли число
@@ -243,7 +129,7 @@ class CalculatorBrain {
             while !ops.isEmpty {
                 resultTemp = result
                 (result,ops,_) = description(ops)
-                result = result + "," + resultTemp  
+                result = result + "," + resultTemp
             }
             return result
         }
@@ -299,11 +185,11 @@ class CalculatorBrain {
             case .Operand(let operand): return(.Value(operand),remainingOps)
             case .Constant(_, let operation): return (.Value(operation()),remainingOps)
             case .Variable(let variable): let (result,remainingOps) = variableToEvaluateOrReportErrors(variable,remainingOps: remainingOps)
-                return (result,remainingOps)
+            return (result,remainingOps)
             case .UnaryOperation(_, let operation,let errorTest): let (result,remainingOps) = unaryOperationToEvaluateOrReportErrors(operation,errorTest: errorTest,ops: remainingOps)
-                return (result,remainingOps)
+            return (result,remainingOps)
             case .BinaryOperation(_,_, let operation,let errorTest): let (result,remainingOps) = binaryOperationToEvaluateOrReportErrors(operation,errorTest: errorTest,remainingOps: remainingOps)
-                return (result,remainingOps)
+            return (result,remainingOps)
             }
         }
         return (.Error("Мало операндов"),ops)
@@ -315,49 +201,6 @@ class CalculatorBrain {
         }
         return .Value(0)
     }
-    
-    
-
-
-    
-}
-// мы можем использовать NSNumberFormatter со специальными свойствами при
-// выводе результатов на display. В случае больших чисел нам нужны разделители
-// групп цифр, если после точки выводится очень много знаков, то мы бы хотели
-// ограничиться 10 знаками после точки, некоторые функции, например, √
-// может возвращать значение Nan при отрицательном аргументе и нам надо
-// указать, что это ошибка Error. Мы получаем NSNumberFormatter со
-// специальными свойствами при помощи функции numberFormatter()
-
-// Если два вызова то перед именем функции ставим модификатор class
-// Почему ?
-
-//http://bestkora.com/IosDeveloper/kak-sozdat-nsnumberformatter-singleton-v-swift/
-class CalculatorFormatter: NSNumberFormatter {
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    override init() {
-        super.init()
-        self.locale = NSLocale.currentLocale()
-        self.numberStyle = .DecimalStyle
-        self.maximumFractionDigits = 10
-        self.notANumberSymbol = "Error"
-        self.groupingSeparator = " "
-        
-    }
-    
-    // Swift 1.2 or above
-    static let sharedInstance = CalculatorFormatter()
-    
-    // Swift 1.1
-    /*    class var sharedInstance: CalculatorFormatter {
-    struct Static {
-    static let instance = CalculatorFormatter()
-    }
-    return Static.instance
-    }*/
+   
     
 }
