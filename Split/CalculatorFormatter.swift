@@ -1,5 +1,6 @@
 import Foundation
 
+
 // мы можем использовать NSNumberFormatter со специальными свойствами при
 // выводе результатов на display. В случае больших чисел нам нужны разделители
 // групп цифр, если после точки выводится очень много знаков, то мы бы хотели
@@ -40,6 +41,10 @@ class CalculatorFormatter: NSNumberFormatter {
     }*/
     
 }
+
+
+
+
 
 extension String {
     func toDouble() -> Double? {

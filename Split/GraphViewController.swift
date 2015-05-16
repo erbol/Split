@@ -21,9 +21,37 @@ class GraphViewController: UIViewController, GraphViewDataSource {
         let tap = UITapGestureRecognizer(target: graphView, action: "origin:")
         tap.numberOfTapsRequired = 2
         graphView.addGestureRecognizer(tap)
-        //updateUI()
+        
+        let tap1 = UITapGestureRecognizer(target: graphView, action: "origin1:")
+        tap1.numberOfTapsRequired = 1
+        graphView.addGestureRecognizer(tap1)
+        
+
+        updateUI()
         }
     }
+    
+    
+    @IBAction func Coordinate(sender: UIButton) {
+        
+        if let o = showHide.titleLabel?.text{
+            if o == "Show" {
+                graphView.show = true
+                showHide.setTitle("Hide", forState: UIControlState.Normal)
+                
+            }else{
+                graphView.show = false
+                showHide.setTitle("Show", forState: UIControlState.Normal)
+                
+            }
+        }
+        
+    }
+    
+    @IBOutlet weak var showHide: UIButton!
+    
+    
+
     
  
     private var brain = CalculatorBrain()
@@ -32,13 +60,13 @@ class GraphViewController: UIViewController, GraphViewDataSource {
     var program: PropertyList? { didSet {
         brain.nonPrivateAPI("enterVariable",operand:0)
         brain.program = program!
-        //updateUI()
+        updateUI()
         }
     }
     
     func updateUI() {
-        graphView?.setNeedsDisplay()
-        //title = brain.description != "?" ? brain.description : "График"
+        //graphView?.setNeedsDisplay()
+        title = brain.description()
     }
 
 // dataSource метод протокола GraphViewDataSource

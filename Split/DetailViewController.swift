@@ -201,9 +201,14 @@ class DetailViewController: UIViewController {
         //let font = UIFont(name: "Academy Engraved LET", size: sizeFont)
         let font = UIFont(name: "Arial", size: 20)
         let textStyle = NSMutableParagraphStyle.defaultParagraphStyle()
+        let textColor = UIColor(red: 0.147, green: 0.222, blue: 0.162, alpha: 1.0)
+        //UIColor(red: 0.175, green: 0.458, blue: 0.431, alpha: 1)
+
         
         let numberOneAttributes = [
-            NSFontAttributeName: font!
+            NSFontAttributeName: font!,
+            NSForegroundColorAttributeName: textColor,
+            NSParagraphStyleAttributeName: textStyle
         ]
         nameFunction.drawInRect(nameFunctionRect,
             withAttributes:numberOneAttributes)

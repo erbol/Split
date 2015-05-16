@@ -11,6 +11,9 @@ protocol GraphViewDataSource: class {
 
 @IBDesignable
 class GraphView: UIView {
+  
+    
+    
     let axesDrawer = AxesDrawer(color: UIColor.blueColor())
     
     private var graphCenter: CGPoint {
@@ -19,6 +22,8 @@ class GraphView: UIView {
     
     weak var dataSource: GraphViewDataSource?
 
+    var show = false { didSet { setNeedsDisplay() } }
+    var strShow = "" { didSet { setNeedsDisplay() } }
     @IBInspectable
     var scale: CGFloat = 50.0 { didSet { setNeedsDisplay() } }
     var origin: CGPoint? { didSet { setNeedsDisplay() }}
@@ -30,9 +35,16 @@ class GraphView: UIView {
     
     override func drawRect(rect: CGRect) {
         origin =  origin ?? graphCenter
+        
         axesDrawer.contentScaleFactor = contentScaleFactor
+
         axesDrawer.drawAxesInRect(bounds, origin: origin!, pointsPerUnit: scale)
         drawCurveInRect(bounds, origin: origin!, pointsPerUnit: scale)
+
+        if !show && strShow != ""{strShow = ""}
+        if show {drawText(strShow)}
+
+        
     }
     
     func drawCurveInRect(bounds: CGRect, origin: CGPoint, pointsPerUnit: CGFloat){
@@ -61,6 +73,7 @@ class GraphView: UIView {
             }
         }
         path.stroke()
+        
     }
     
     func scale(gesture: UIPinchGestureRecognizer) {
@@ -84,10 +97,51 @@ class GraphView: UIView {
         }
     }
     
-    func origin(gesture: UITapGestureRecognizer) {
+    func origin(gesture: UITapGestureRecognizer){
+
+
         if gesture.state == .Ended {
             origin = gesture.locationInView(self)
+            
+        }
+
+    }
+    
+    func origin1(gesture: UITapGestureRecognizer) {
+        if gesture.state == .Ended && show{
+            let point = gesture.locationInView(self)
+            let x = (point.x - origin!.x) / scale
+            let stringX = String(format: "%.2f", x)
+            let y = dataSource?.y(x)
+            let stringY = String(format: "%.2f", y!)
+            strShow = "X = \(stringX), Y = \(stringY)"
+
         }
     }
+    
+    func drawText(str: String){
+        
+    
+        //println(str)
+        let coordRect = CGRectMake(self.bounds.width/15 , self.bounds.height*1/15, 200, 50)//CGRect(x: self.frame.width/2 , y: self.frame.height*9/10 , width: 350, height: 30)
+
+
+        let font = UIFont(name: "Arial", size: 18)
+        let textStyle = NSMutableParagraphStyle.defaultParagraphStyle()
+        let textColor = UIColor(red: 0, green: 0, blue: 1, alpha: 1)
+        //UIColor(red: 0.175, green: 0.458, blue: 0.431, alpha: 1)
+        
+        
+        let numberOneAttributes = [
+            NSFontAttributeName: font!,
+            NSForegroundColorAttributeName: textColor
+        ]
+        str.drawInRect(coordRect,
+            withAttributes:numberOneAttributes)
+        
+        
+    }
+    
+
 
 }
