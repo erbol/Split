@@ -30,29 +30,7 @@ class GraphViewController: UIViewController, GraphViewDataSource {
         updateUI()
         }
     }
-    
-    
-    @IBAction func Coordinate(sender: UIButton) {
-        
-        if let o = showHide.titleLabel?.text{
-            if o == "Show" {
-                graphView.show = true
-                showHide.setTitle("Hide", forState: UIControlState.Normal)
-                
-            }else{
-                graphView.show = false
-                showHide.setTitle("Show", forState: UIControlState.Normal)
-                
-            }
-        }
-        
-    }
-    
-    @IBOutlet weak var showHide: UIButton!
-    
-    
-
-    
+  
  
     private var brain = CalculatorBrain()
     
@@ -66,7 +44,7 @@ class GraphViewController: UIViewController, GraphViewDataSource {
     
     func updateUI() {
         //graphView?.setNeedsDisplay()
-        title = brain.description()
+        title = brain.description != "?" ? brain.description : "График"
     }
 
 // dataSource метод протокола GraphViewDataSource

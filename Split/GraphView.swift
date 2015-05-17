@@ -22,7 +22,8 @@ class GraphView: UIView {
     
     weak var dataSource: GraphViewDataSource?
 
-    var show = false { didSet { setNeedsDisplay() } }
+    var pointClick = CGPoint.zeroPoint { didSet { setNeedsDisplay() } }
+    var show = true { didSet { setNeedsDisplay() } }
     var strShow = "" { didSet { setNeedsDisplay() } }
     @IBInspectable
     var scale: CGFloat = 50.0 { didSet { setNeedsDisplay() } }
@@ -42,7 +43,9 @@ class GraphView: UIView {
         drawCurveInRect(bounds, origin: origin!, pointsPerUnit: scale)
 
         if !show && strShow != ""{strShow = ""}
-        if show {drawText(strShow)}
+        if show {drawText(strShow)
+        drawCircle(pointClick)
+        }
 
         
     }
@@ -77,6 +80,8 @@ class GraphView: UIView {
     }
     
     func scale(gesture: UIPinchGestureRecognizer) {
+        pointClick.x = -20
+        strShow = ""
         if gesture.state == .Changed {
             scale *= gesture.scale
             gesture.scale = 1.0
@@ -84,6 +89,8 @@ class GraphView: UIView {
     }
     
     func originMove(gesture: UIPanGestureRecognizer) {
+        pointClick.x = -20
+        strShow = ""
         switch gesture.state {
         case .Ended: fallthrough
         case .Changed:
@@ -104,15 +111,22 @@ class GraphView: UIView {
             origin = gesture.locationInView(self)
             
         }
+        pointClick.x = -20
+        strShow = ""
 
     }
     
     func origin1(gesture: UITapGestureRecognizer) {
         if gesture.state == .Ended && show{
             let point = gesture.locationInView(self)
+            pointClick.x = point.x
             let x = (point.x - origin!.x) / scale
             let stringX = String(format: "%.2f", x)
+            
             let y = dataSource?.y(x)
+            
+            pointClick.y = origin!.y - y! * scale
+            
             let stringY = String(format: "%.2f", y!)
             strShow = "X = \(stringX), Y = \(stringY)"
 
@@ -122,8 +136,8 @@ class GraphView: UIView {
     func drawText(str: String){
         
     
-        //println(str)
-        let coordRect = CGRectMake(self.bounds.width/15 , self.bounds.height*1/15, 200, 50)//CGRect(x: self.frame.width/2 , y: self.frame.height*9/10 , width: 350, height: 30)
+        
+        let coordRect = CGRectMake(self.bounds.width/15 , self.bounds.height*1/15, 200, 50)
 
 
         let font = UIFont(name: "Arial", size: 18)
@@ -140,8 +154,22 @@ class GraphView: UIView {
             withAttributes:numberOneAttributes)
         
         
+        
+        
     }
     
+    func drawCircle(pointClick : CGPoint){
+        if pointClick.y.isNormal {
+            let context = UIGraphicsGetCurrentContext()
+            CGContextSetLineWidth(context, 2.0)
+            CGContextSetStrokeColorWithColor(context,
+            UIColor.blueColor().CGColor)
+
+            let rectangle = CGRectMake(pointClick.x - 7.5,pointClick.y - 7.5,15,15)
+            CGContextAddEllipseInRect(context, rectangle)
+            CGContextStrokePath(context)
+        }
+    }
 
 
 }

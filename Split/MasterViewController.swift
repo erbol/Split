@@ -74,7 +74,10 @@ class MasterViewController: UIViewController {
                 display.text = dropLast(display.text!)
                 
             }else{
-                display.text = "0"
+                userIsInTheMiddleOfTypingANumber = false
+                // Получаем стек и отображаем в метке history
+                displayResult = brain.evaluateOrReportErrors()
+                
             }
         }else{
             brain.nonPrivateAPI("undo")
@@ -166,7 +169,7 @@ class MasterViewController: UIViewController {
             
             display.text = displayResult.description
             userIsInTheMiddleOfTypingANumber = false
-            let result = brain.description() + " = "
+            let result = brain.description + " = "
             history.text = result
             
         }

@@ -78,3 +78,9 @@ test2(-2)
 var origin:Int? = nil
 var graphCenter = 7
 origin =  origin ?? graphCenter
+
+var myString:String? = "Hello"
+
+if (myString != nil) {
+    println(myString!)
+}

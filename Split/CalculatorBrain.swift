@@ -99,6 +99,18 @@ class CalculatorBrain: enumStack {
         return ("\(operand2) \(symbolOperation) \(operand1)", remainingOpsOperand2, opUpper.precedence)
     }
     
+    var description: String {
+        get {
+            var (result, remainder) = ("", opStack)
+            var current: String
+            do {
+                (current, remainder, _) = description(remainder)
+                result = result == "" ? current : "\(current), \(result)"
+            } while remainder.count > 0
+            return result
+        }
+    }
+    
     
     private func description(ops: [Op])  -> (result: String, remainingOps: [Op], precedence:UInt8){
         if !ops.isEmpty {
@@ -118,10 +130,10 @@ class CalculatorBrain: enumStack {
                 return (descriptionOperand, remainingOps, precedenceOperand)
             }
         }
-        return ("", ops, UInt8.max)
+        return ("?", ops, UInt8.max)
         
     }
-    
+    /*
     func description()  -> String{
         if !opStack.isEmpty {
             var (result,ops,_) = description(opStack)
@@ -135,6 +147,8 @@ class CalculatorBrain: enumStack {
         }
         return ""
     }
+    */
+
     
     private func variableToEvaluateOrReportErrors(symbolVariable:String,remainingOps:[Op])->(Result,[Op]){
         if let varValue = variableValues[symbolVariable]{
