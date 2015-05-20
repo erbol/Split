@@ -15,11 +15,11 @@ class GraphView: UIView {
     
     
     let axesDrawer = AxesDrawer(color: UIColor.blueColor())
-    
+    /*
     private var graphCenter: CGPoint {
         return convertPoint(center, fromView: superview)
     }
-    
+    */
     weak var dataSource: GraphViewDataSource?
 
     var pointClick = CGPoint.zeroPoint { didSet { setNeedsDisplay() } }
@@ -27,20 +27,55 @@ class GraphView: UIView {
     var strShow = "" { didSet { setNeedsDisplay() } }
     @IBInspectable
     var scale: CGFloat = 50.0 { didSet { setNeedsDisplay() } }
-    var origin: CGPoint? { didSet { setNeedsDisplay() }}
+    // Перевод слова origin. 1) происхождение. 2) возникновение. 3) начало. 4) источник. 5) первоисточник. 6) первопричина. 7) корень дерева ...
+    // origin это координаты на экране в пикселах точки отсчета системы координат
+    
+    var origin: CGPoint {
+        
+        get {
+            var origin = originRelativeToCenter
+            println(originRelativeToCenter)
+            if geometryReady {
+                // center - центр фрейма
+                //println(center.x)
+                origin.x += center.x
+                origin.y += center.y
+            }
+            return origin
+        }
+        set {
+            var origin = newValue
+            if geometryReady {
+                origin.x -= center.x
+                origin.y -= center.y
+            }
+            originRelativeToCenter = origin
+        }
+    }
+
     @IBInspectable
-    var lineWidth: CGFloat = 2.0 { didSet { setNeedsDisplay() } }
+    var lineWidth: CGFloat = 1.0 { didSet { setNeedsDisplay() } }
     @IBInspectable
     var color: UIColor = UIColor.blackColor() { didSet { setNeedsDisplay() } }
+    
+    // originRelativeToCenter - расстояние от origin до центра окна в пикселах
+    private var originRelativeToCenter: CGPoint = CGPoint() { didSet { setNeedsDisplay() } }
+    // geometryReady имеет значение false только один раз в тот момент когда переходим в окно GRAPHVIEWCONTROLLER
+    private var geometryReady = false
 
     
     override func drawRect(rect: CGRect) {
-        origin =  origin ?? graphCenter
+        if !geometryReady && originRelativeToCenter != CGPointZero {
+            // С помощью originHelper вычисляем origin (c помощью метода set)
+            var originHelper = origin
+            geometryReady = true
+            origin = originHelper
+        }
         
         axesDrawer.contentScaleFactor = contentScaleFactor
 
-        axesDrawer.drawAxesInRect(bounds, origin: origin!, pointsPerUnit: scale)
-        drawCurveInRect(bounds, origin: origin!, pointsPerUnit: scale)
+        axesDrawer.drawAxesInRect(bounds, origin: origin, pointsPerUnit: scale)
+        drawCurveInRect(bounds, origin: origin, pointsPerUnit: scale)
 
         if !show && strShow != ""{strShow = ""}
         if show {drawText(strShow)
@@ -79,53 +114,76 @@ class GraphView: UIView {
         
     }
     
-    func scale(gesture: UIPinchGestureRecognizer) {
-        pointClick.x = -20
-        strShow = ""
-        if gesture.state == .Changed {
-            scale *= gesture.scale
-            gesture.scale = 1.0
-        }
-    }
+    var snapshot:UIView?
     
-    func originMove(gesture: UIPanGestureRecognizer) {
+    func zoom(gesture: UIPinchGestureRecognizer) {
         pointClick.x = -20
         strShow = ""
         switch gesture.state {
-        case .Ended: fallthrough
+        case .Began:
+            snapshot = self.snapshotViewAfterScreenUpdates(false)
+            snapshot!.alpha = 0.8
+            self.addSubview(snapshot!)
         case .Changed:
-            let translation = gesture.translationInView(self)
-            if translation != CGPointZero {
-                origin?.x += translation.x
-                origin?.y += translation.y
-                gesture.setTranslation(CGPointZero, inView: self)
-            }
+            let touch = gesture.locationInView(self)
+            snapshot!.frame.size.height *= gesture.scale
+            snapshot!.frame.size.width *= gesture.scale
+            snapshot!.frame.origin.x = snapshot!.frame.origin.x * gesture.scale + (1 - gesture.scale) * touch.x
+            snapshot!.frame.origin.y = snapshot!.frame.origin.y * gesture.scale + (1 - gesture.scale) * touch.y
+            gesture.scale = 1.0
+        case .Ended:
+            let changedScale = snapshot!.frame.height / self.frame.height
+            scale *= changedScale
+            origin.x = origin.x * changedScale + snapshot!.frame.origin.x
+            origin.y = origin.y * changedScale + snapshot!.frame.origin.y
+            
+            snapshot!.removeFromSuperview()
+            snapshot = nil
         default: break
         }
     }
     
-    func origin(gesture: UITapGestureRecognizer){
-
-
-        if gesture.state == .Ended {
-            origin = gesture.locationInView(self)
-            
-        }
+    func move(gesture: UIPanGestureRecognizer) {
         pointClick.x = -20
         strShow = ""
-
+        switch gesture.state {
+        case .Began:
+            snapshot = self.snapshotViewAfterScreenUpdates(false)
+            snapshot!.alpha = 0.8
+            self.addSubview(snapshot!)
+        case .Changed:
+            let translation = gesture.translationInView(self)
+            snapshot!.center.x += translation.x
+            snapshot!.center.y += translation.y
+            gesture.setTranslation(CGPointZero, inView: self)
+        case .Ended:
+            origin.x += snapshot!.frame.origin.x
+            origin.y += snapshot!.frame.origin.y
+            snapshot!.removeFromSuperview()
+            snapshot = nil
+        default: break
+        }
     }
     
-    func origin1(gesture: UITapGestureRecognizer) {
+    func center(gesture: UITapGestureRecognizer) {
+        pointClick.x = -20
+        strShow = ""
+        if gesture.state == .Ended {
+            origin = gesture.locationInView(self)
+        }
+    }
+    
+    
+    func center1(gesture: UITapGestureRecognizer) {
         if gesture.state == .Ended && show{
             let point = gesture.locationInView(self)
             pointClick.x = point.x
-            let x = (point.x - origin!.x) / scale
+            let x = (point.x - origin.x) / scale
             let stringX = String(format: "%.2f", x)
             
             let y = dataSource?.y(x)
             
-            pointClick.y = origin!.y - y! * scale
+            pointClick.y = origin.y - y! * scale
             
             let stringY = String(format: "%.2f", y!)
             strShow = "X = \(stringX), Y = \(stringY)"
@@ -137,7 +195,7 @@ class GraphView: UIView {
         
     
         
-        let coordRect = CGRectMake(self.bounds.width/15 , self.bounds.height*1/15, 200, 50)
+        let coordRect = CGRectMake(self.bounds.width/30 , self.bounds.height*1/50, 200, 50)
 
 
         let font = UIFont(name: "Arial", size: 18)
@@ -161,11 +219,11 @@ class GraphView: UIView {
     func drawCircle(pointClick : CGPoint){
         if pointClick.y.isNormal {
             let context = UIGraphicsGetCurrentContext()
-            CGContextSetLineWidth(context, 2.0)
+            CGContextSetLineWidth(context, 1.0)
             CGContextSetStrokeColorWithColor(context,
             UIColor.blueColor().CGColor)
 
-            let rectangle = CGRectMake(pointClick.x - 7.5,pointClick.y - 7.5,15,15)
+            let rectangle = CGRectMake(pointClick.x - 5,pointClick.y - 5,10,10)
             CGContextAddEllipseInRect(context, rectangle)
             CGContextStrokePath(context)
         }

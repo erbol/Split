@@ -188,8 +188,8 @@ class MasterViewController: UIViewController {
             if let identifier = segue.identifier {
                 switch identifier {
                 case "showDetail":
-                    println("")
-                    //gvc.title = brain.description == "" ? "Graph" : brain.description.componentsSeparatedByString(", ").last
+                    //println("")
+                    gvc.title = brain.description == "" ? "График" : brain.description.componentsSeparatedByString(", ").last
                     gvc.program = brain.program
                 default:
                     break
