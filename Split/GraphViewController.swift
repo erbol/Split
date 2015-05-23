@@ -22,7 +22,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
         tap.numberOfTapsRequired = 2
         graphView.addGestureRecognizer(tap)
         
-        let tap1 = UITapGestureRecognizer(target: graphView, action: "center1:")
+        let tap1 = UITapGestureRecognizer(target: self, action: "coordinatesPoint:")
         tap1.numberOfTapsRequired = 1
         graphView.addGestureRecognizer(tap1)
         
@@ -32,9 +32,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
             graphView.origin = origin
         }
         graphView.scale = scale
-        
 
-        //updateUI()
         }
     }
   
@@ -51,46 +49,50 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
     var program: PropertyList? { didSet {
         brain.nonPrivateAPI("enterVariable",operand:0)
         brain.program = program!
-        //updateUI()
+        
         }
     }
+    var calculateStatictics = true
     
-    func updateUI() {
-        //graphView?.setNeedsDisplay()
-        //title = brain.description != "?" ? brain.description : "График"
-    }
+
 
 // dataSource метод протокола GraphViewDataSource
     func y(x: CGFloat) -> CGFloat? {
         brain.nonPrivateAPI("enterVariable",operand: Double (x))
         //brain.setVariable("M", value: Double (x))
-        if let y = brain.evaluate() {
+        
+        if let y = brain.evaluate()  {
             // С помощью функции min выбираем из двух величин minValue и y минимальную
-            if let minValue = statistics["min"] {
-                statistics["min"] = min(minValue, y)
-            } else {
-                statistics["min"] = y
-            }
+            if calculateStatictics {
+                //println("erbol")
+                if let minValue = statistics["min"] {
+                    statistics["min"] = min(minValue, y)
+                } else {
+                    statistics["min"] = y
+                }
             
-            if let maxValue = statistics["max"] {
-                statistics["max"] = max(maxValue, y)
-            } else {
-                statistics["max"] = y
+                if let maxValue = statistics["max"] {
+                    statistics["max"] = max(maxValue, y)
+                } else {
+                    statistics["max"] = y
+                }
+                // Суммируем все Y по точкам
+                // Считаем количество точек
+                if let avgValue = statistics["avg"] {
+                    if let avgNum = statistics["avgNum"]{
+                        statistics["avg"] = statistics["avg"]! + y
+                        // min , max , avg сбрасывают значения после функцией resetStatistics
+                        // avgNum сбрасывается функцией finishStatistics
+                        statistics["avgNum"] = statistics["avgNum"]! + 1
+                    }
+                } else {
+                    statistics["avg"] = y
+                    statistics["avgNum"] = 1
+                }
             }
-            // Суммируем все Y по точкам
-            // Считаем количество точек
-            if let avgValue = statistics["avg"] {
-                statistics["avg"] = statistics["avg"]! + y
-                // min , max , avg сбрасывают значения после функцией resetStatistics
-                // avgNum сбрасывается функцией finishStatistics
-                statistics["avgNum"] = statistics["avgNum"]! + 1
-            } else {
-                statistics["avg"] = y
-                statistics["avgNum"] = 1
-            }
-            
             return CGFloat(y)
         }
+        
         return nil
 
     }
@@ -128,6 +130,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
 
     // Изменяем параметр scale
     func zoom(gesture: UIPinchGestureRecognizer) {
+        calculateStatictics = true
         graphView.zoom(gesture)
         if gesture.state == .Ended {
             resetStatistics()
@@ -139,6 +142,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
     }
     // Сдвигаем центр координат
     func move(gesture: UIPanGestureRecognizer) {
+        calculateStatictics = true
         graphView.move(gesture)
         if gesture.state == .Ended {
             
@@ -149,11 +153,27 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
     }
     // Сдвигаем центр координат
     func center(gesture: UITapGestureRecognizer) {
+        calculateStatictics = true
         graphView.center(gesture)
         if gesture.state == .Ended {
             resetStatistics()
             origin = graphView.origin
         }
+    }
+    
+    // Сдвигаем центр координат
+    func coordinatesPoint(gesture: UITapGestureRecognizer) {
+        
+        calculateStatictics = false
+        graphView.coordinatesPoint(gesture)
+        
+        
+        
+        if gesture.state == .Ended {
+            //drawGrapic = true
+            //origin = graphView.origin
+        }
+
     }
 
     // Создаем словарь который будет содержать пары ключ-значение
@@ -170,7 +190,7 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
             if let avgValue = statistics["avg"] {
                 statistics["avg"] = avgValue / num
                 
-                // Почему в nil устанавливается значение
+                // 
                 statistics["avgNum"] = nil
             }
         }
@@ -185,12 +205,13 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
                     if let ppc = tvc.popoverPresentationController {
                         ppc.delegate = self
                     }
-                    println("erbol")
-                    // Сбрасываем значения величин min, max, avg при переходе от окна калькулятора к окну графика
+                    
+                    // Сбрасываем значения величины avgNum при переходе от окна калькулятора к окну графика
                     finishStatistics()
                     var texts = [String]()
                     for (key, value) in statistics {
-                        texts += ["\(key) = \(value)"]
+                        let valueToStr = String(format: "%.4f", value)
+                        texts += ["\(key) = \(valueToStr)"]
                     }
                     tvc.text = texts.count > 0 ? "\n".join(texts) : "none"
                 }
@@ -200,13 +221,14 @@ class GraphViewController: UIViewController, GraphViewDataSource, UIPopoverPrese
     }
     
     func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle {
+        
         return UIModalPresentationStyle.None
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         // После показа статистик сбрасываем avgNum
-        println("er")
+        
         resetStatistics()
     }
 

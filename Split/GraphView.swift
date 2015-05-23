@@ -34,10 +34,7 @@ class GraphView: UIView {
         
         get {
             var origin = originRelativeToCenter
-            println(originRelativeToCenter)
             if geometryReady {
-                // center - центр фрейма
-                //println(center.x)
                 origin.x += center.x
                 origin.y += center.y
             }
@@ -94,6 +91,7 @@ class GraphView: UIView {
         var firstValue = true
         for var i = 0; i <= Int(bounds.size.width * contentScaleFactor); i++ {
             point.x = CGFloat(i) / contentScaleFactor
+            //println("ee")
             if let y = dataSource?.y((point.x - origin.x) / scale) {
                 if !y.isNormal && !y.isZero {
                     firstValue = true
@@ -121,22 +119,31 @@ class GraphView: UIView {
         strShow = ""
         switch gesture.state {
         case .Began:
+            // в subView snapshot  помещаем мгновенный снимок родительского view и говорим чтобы он не обновлялся, по моему так надо понимать инструкцию self.snapshotViewAfterScreenUpdates(false)
+            // Returns a snapshot view based on the current screen contents.
+            // Функция snapshotViewAfterScreenUpdates возвращает мгновенный снимок экрана
+            // Если в качестве аргумента используем false , то снимок делается с текущего состояния экрана
+            // https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIScreen_Class/#//apple_ref/occ/instm/UIScreen/snapshotViewAfterScreenUpdates:
             snapshot = self.snapshotViewAfterScreenUpdates(false)
             snapshot!.alpha = 0.8
             self.addSubview(snapshot!)
         case .Changed:
             let touch = gesture.locationInView(self)
+            // Вычисляем высоту и ширину "снимка" и положения начала системы координат
             snapshot!.frame.size.height *= gesture.scale
             snapshot!.frame.size.width *= gesture.scale
             snapshot!.frame.origin.x = snapshot!.frame.origin.x * gesture.scale + (1 - gesture.scale) * touch.x
             snapshot!.frame.origin.y = snapshot!.frame.origin.y * gesture.scale + (1 - gesture.scale) * touch.y
             gesture.scale = 1.0
         case .Ended:
+            // Вычисляем zoom (изменение масштаба)
             let changedScale = snapshot!.frame.height / self.frame.height
+            // Вычисляем изменение величины scale
             scale *= changedScale
+            // Вычисляем положение начала координат
             origin.x = origin.x * changedScale + snapshot!.frame.origin.x
             origin.y = origin.y * changedScale + snapshot!.frame.origin.y
-            
+            // Удаляем снимок(subView)
             snapshot!.removeFromSuperview()
             snapshot = nil
         default: break
@@ -174,19 +181,22 @@ class GraphView: UIView {
     }
     
     
-    func center1(gesture: UITapGestureRecognizer) {
+    func coordinatesPoint(gesture: UITapGestureRecognizer) {
         if gesture.state == .Ended && show{
+            
             let point = gesture.locationInView(self)
-            pointClick.x = point.x
+            
             let x = (point.x - origin.x) / scale
-            let stringX = String(format: "%.2f", x)
             
-            let y = dataSource?.y(x)
+            if let y = dataSource?.y(x) {
+                pointClick.x = point.x
+                pointClick.y = origin.y - y * scale
             
-            pointClick.y = origin.y - y! * scale
-            
-            let stringY = String(format: "%.2f", y!)
-            strShow = "X = \(stringX), Y = \(stringY)"
+                let stringX = String(format: "%.2f", x)
+                let stringY = String(format: "%.2f", y)
+                
+                strShow = "X = \(stringX), Y = \(stringY)"
+            }
 
         }
     }
